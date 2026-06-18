@@ -1,0 +1,69 @@
+name: NestJS Prisma CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: test
+      JWT_SECRET: test-secret
+      JWT_EXPIRES_IN: 24h
+
+      DATABASE_URL_USERS: postgresql://user:password@localhost:5432/users
+      DATABASE_URL_SUBSCRIPTIONS: postgresql://user:password@localhost:5432/subscriptions
+      DATABASE_URL_MUSIC: postgresql://user:password@localhost:5432/music
+      DATABASE_URL_LIKES: postgresql://user:password@localhost:5432/likes
+      DATABASE_URL_MATCHES: postgresql://user:password@localhost:5432/matches
+      DATABASE_URL_CHAT: postgresql://user:password@localhost:5432/chat
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Generar clientes Prisma
+        run: npm run prisma:generate
+
+      - name: Verificar TypeScript
+        run: npx tsc --noEmit
+
+      - name: Ejecutar pruebas unitarias
+        run: npm run test --if-present
+
+      - name: Ejecutar pruebas E2E
+        run: npm run test:e2e --if-present
+
+      - name: Compilar aplicación
+        run: npm run build
+
+      - name: Publicar artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: nestjs-build
+          path: dist/
+
+      - name: Despliegue automático
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Iniciando despliegue..."
+          echo "Aplicación NestJS compilada correctamente."
+          echo "Clientes Prisma generados."
+          echo "Pipeline finalizado con éxito."
