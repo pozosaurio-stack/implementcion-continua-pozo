@@ -1,0 +1,523 @@
+{
+  "info": {
+    "_postman_id": "nestjs-prisma-api-collection",
+    "name": "NestJS Prisma Multiple Schemas API",
+    "description": "Colección completa para testing de API - NestJS con Prisma ORM",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 AUTENTICACIÓN",
+      "item": [
+        {
+          "name": "Registrarse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.environment.set('userId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan García\",\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password123!\",\n  \"birthDate\": \"1995-05-15\",\n  \"gender\": \"Male\",\n  \"bio\": \"Amante de la música y viajes\",\n  \"city\": \"Madrid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('token', jsonData.token);",
+                  "    pm.environment.set('userId', jsonData.user.id);",
+                  "    console.log('✅ Token guardado correctamente');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 USUARIOS",
+      "item": [
+        {
+          "name": "Crear Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria López\",\n  \"email\": \"maria@example.com\",\n  \"passwordHash\": \"hashedpass123\",\n  \"birthDate\": \"1998-03-20\",\n  \"gender\": \"Female\",\n  \"city\": \"Barcelona\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Usuarios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan García Actualizado\",\n  \"bio\": \"Actualizado con éxito\",\n  \"city\": \"Valencia\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Agregar Foto de Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"photoUrl\": \"https://example.com/photo1.jpg\",\n  \"photoOrder\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/photos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "photos"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Fotos del Usuario",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{userId}}/photos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{userId}}", "photos"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Usuario",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/users/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💳 SUSCRIPCIONES",
+      "item": [
+        {
+          "name": "Crear Plan de Suscripción",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Plan Premium\",\n  \"price\": 9.99,\n  \"durationDays\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/plans",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "plans"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Planes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/plans",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "plans"]
+            }
+          }
+        },
+        {
+          "name": "Asignar Suscripción al Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"planId\": \"plan-id-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/assign",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "assign"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎵 MÚSICA",
+      "item": [
+        {
+          "name": "Crear Track",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Bohemian Rhapsody\",\n  \"artist\": \"Queen\",\n  \"spotifyUrl\": \"https://open.spotify.com/track/...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/music/tracks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "music", "tracks"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Tracks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/music/tracks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "music", "tracks"]
+            }
+          }
+        },
+        {
+          "name": "Agregar Música al Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"trackId\": \"track-id-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/music/add",
+              "host": ["{{base_url}}"],
+              "path": ["api", "music", "add"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "❤️ LIKES",
+      "item": [
+        {
+          "name": "Crear Like",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderUserId\": \"{{userId}}\",\n  \"receiverUserId\": \"other-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/likes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "likes"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Likes Enviados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/likes/sent/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "likes", "sent", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Likes Recibidos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/likes/received/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "likes", "received", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💞 MATCHES",
+      "item": [
+        {
+          "name": "Crear Match",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user1Id\": \"{{userId}}\",\n  \"user2Id\": \"other-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/matches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "matches"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Matches del Usuario",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/matches/user/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "matches", "user", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Matches Activos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/matches/user/{{userId}}/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "matches", "user", "{{userId}}", "active"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 CHAT",
+      "item": [
+        {
+          "name": "Crear Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user1Id\": \"{{userId}}\",\n  \"user2Id\": \"other-user-id\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/chat",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chat"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Chats del Usuario",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/chat/user/{{userId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chat", "user", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Enviar Mensaje",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matchId\": \"match-id-here\",\n  \"senderUserId\": \"{{userId}}\",\n  \"message\": \"¡Hola! ¿Cómo estás?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/chat/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chat", "messages"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Mensajes del Chat",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/chat/messages/match-id-here",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chat", "messages", "match-id-here"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 HEALTH CHECK",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
